@@ -45,6 +45,8 @@ An extension is a mixin class declaring a `models` attribute: a list of the lowe
 
 By default, NetBox imports `type_extensions` and `filter_extensions` from a `graphql_extensions.py` module beside the plugin's `graphql.py`. The `PluginConfig` attributes may override each with a dotted path to a list under any attribute name.
 
+These lists are registered automatically during plugin initialization, which is the only supported way to register extensions. Registering an extension at any later point is not supported: whether its target GraphQL type has already been assembled (and thus whether registration fails) depends on how NetBox was started.
+
 !!! warning
     Extension modules are imported while plugins initialize, before NetBox's core GraphQL types are assembled. They must not import core GraphQL modules (e.g. `dcim.graphql.types`) at module level. A premature import assembles the affected core types early, and any extension registered afterwards for one of them fails at startup. Reference core types only through `strawberry.lazy()` string annotations. Plugin schema modules (`graphql.py`) are loaded later, during schema assembly, and may import core GraphQL types freely.
 
